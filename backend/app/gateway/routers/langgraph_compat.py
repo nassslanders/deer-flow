@@ -1,0 +1,45 @@
+"""LangGraph Compatibility Router - exposes /api/langgraph/* endpoints."""
+from fastapi import APIRouter
+from .threads import (create_thread, delete_thread_data, search_threads,
+    patch_thread, get_thread, get_thread_state, update_thread_state, get_thread_history)
+from .thread_runs import (create_run, stream_run, wait_run, list_runs, get_run,
+    cancel_run, join_run, stream_existing_run, list_thread_messages,
+    list_run_messages, list_run_events, thread_token_usage)
+from .assistants_compat import (search_assistants, get_assistant_compat,
+    get_assistant_graph, get_assistant_schemas)
+from .runs import run_messages, run_feedback
+from .feedback import (upsert_feedback, delete_run_feedback, create_feedback,
+    list_feedback, feedback_stats, delete_feedback)
+router = APIRouter(prefix="/api/langgraph", tags=["langgraph-compat"])
+router.post("/threads")(create_thread)
+router.post("/threads/search")(search_threads)
+router.get("/threads/{thread_id}")(get_thread)
+router.patch("/threads/{thread_id}")(patch_thread)
+router.delete("/threads/{thread_id}")(delete_thread_data)
+router.get("/threads/{thread_id}/state")(get_thread_state)
+router.post("/threads/{thread_id}/state")(update_thread_state)
+router.post("/threads/{thread_id}/history")(get_thread_history)
+router.post("/threads/{thread_id}/runs")(create_run)
+router.post("/threads/{thread_id}/runs/stream")(stream_run)
+router.post("/threads/{thread_id}/runs/wait")(wait_run)
+router.get("/threads/{thread_id}/runs")(list_runs)
+router.get("/threads/{thread_id}/runs/{run_id}")(get_run)
+router.post("/threads/{thread_id}/runs/{run_id}/cancel")(cancel_run)
+router.get("/threads/{thread_id}/runs/{run_id}/join")(join_run)
+router.api_route("/threads/{thread_id}/runs/{run_id}/stream", methods=["GET", "POST"])(stream_existing_run)
+router.get("/threads/{thread_id}/messages")(list_thread_messages)
+router.get("/threads/{thread_id}/runs/{run_id}/messages")(list_run_messages)
+router.get("/threads/{thread_id}/runs/{run_id}/events")(list_run_events)
+router.get("/threads/{thread_id}/token-usage")(thread_token_usage)
+router.post("/assistants/search")(search_assistants)
+router.get("/assistants/{assistant_id}")(get_assistant_compat)
+router.get("/assistants/{assistant_id}/graph")(get_assistant_graph)
+router.get("/assistants/{assistant_id}/schemas")(get_assistant_schemas)
+router.get("/runs/{run_id}/messages")(run_messages)
+router.get("/runs/{run_id}/feedback")(run_feedback)
+router.put("/threads/{thread_id}/runs/{run_id}/feedback")(upsert_feedback)
+router.delete("/threads/{thread_id}/runs/{run_id}/feedback")(delete_run_feedback)
+router.post("/threads/{thread_id}/runs/{run_id}/feedback")(create_feedback)
+router.get("/threads/{thread_id}/runs/{run_id}/feedback")(list_feedback)
+router.get("/threads/{thread_id}/runs/{run_id}/feedback/stats")(feedback_stats)
+router.delete("/threads/{thread_id}/runs/{run_id}/feedback/{feedback_id}")(delete_feedback)

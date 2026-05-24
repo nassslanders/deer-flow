@@ -26,6 +26,7 @@ from app.gateway.routers import (
     thread_runs,
     threads,
     uploads,
+    langgraph_compat,
 )
 from deerflow.config import app_config as deerflow_app_config
 from deerflow.config.app_config import apply_logging_level
@@ -374,6 +375,7 @@ This gateway provides runtime endpoints for agent runs plus custom endpoints for
 
     # Stateless Runs API (stream/wait without a pre-existing thread)
     app.include_router(runs.router)
+    app.include_router(langgraph_compat.router)
 
     @app.get("/health", tags=["health"])
     async def health_check() -> dict[str, str]:
